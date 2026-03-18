@@ -1,0 +1,63 @@
+### Get all Vendors
+GET http://localhost:4004/odata/v4/vendor/Vendor
+Accept: application/json
+
+
+### Get Vendor by RequestId
+GET http://localhost:4004/odata/v4/vendor/Vendor(RequestId=1)
+Accept: application/json
+
+
+### Create Vendor with Child (Deep Insert)
+POST http://localhost:4004/odata/v4/vendor/Vendor
+Content-Type: application/json
+
+{
+  "RequestId": 4,
+  "RequestNumber": "REQ-004",
+  "VendorCode": "V1001",
+  "VendorName": "Test Vendor Pvt Ltd",
+
+  "RegistrationDetail": {
+    "ChildId":4,
+    "SupplierName": "ABC Supplier",
+    "Email": "supplier@test.com",
+    "MobileNumber": "9876543210",
+    "Vertical": "Operations",
+    "AccountGroup": "ZVDM",
+    "Country": "IN",
+    "TypeOfSuppliers": "DM",
+    "BPNo": "BP12345"
+  }
+}
+
+
+### Read Child RegistrationData directly
+GET http://localhost:4004/odata/v4/vendor/RegistrationData
+Accept: application/json
+
+
+### Update Vendor
+PATCH http://localhost:4004/odata/v4/vendor/Vendor(1)
+Content-Type: application/json
+
+{
+  "VendorName": "Updated Vendor Pvt Ltd"
+}
+
+
+### Update Registration Detail (Child)
+PATCH http://localhost:4004/odata/v4/vendor/RegistrationData(1)
+Content-Type: application/json
+
+{
+  "SupplierName": "Updated Supplier Name"
+}
+
+
+### Delete Vendor (Child auto-deletes due to Composition)
+DELETE http://localhost:4004/odata/v4/vendor/Vendor(1)
+
+
+### Delete Child Only (if needed)
+DELETE http://localhost:4004/odata/v4/vendor/RegistrationData(1)
