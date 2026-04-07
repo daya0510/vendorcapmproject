@@ -1,0 +1,16 @@
+{
+  "welcomeFile": "/ui-angular/index.html",
+  "routes": [
+    {
+      "source": "^/vendor-service/(.*)$",
+      "target": "/vendor-service/$1",
+      "destination": "cap-backend",
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "(.*)",
+      "target": "$1",
+      "authenticationType": "none"
+    }
+  ]
+}

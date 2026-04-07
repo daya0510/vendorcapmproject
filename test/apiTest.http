@@ -13,13 +13,13 @@ POST http://localhost:4004/odata/v4/vendor/Vendor
 Content-Type: application/json
 
 {
-  "RequestId": 4,
-  "RequestNumber": "REQ-004",
+  "RequestId": 2,
+  "RequestNumber": "REQ-002",
   "VendorCode": "V1001",
   "VendorName": "Test Vendor Pvt Ltd",
 
   "RegistrationDetail": {
-    "ChildId":4,
+    "ChildId":5,
     "SupplierName": "ABC Supplier",
     "Email": "supplier@test.com",
     "MobileNumber": "9876543210",

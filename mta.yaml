@@ -1,42 +1,106 @@
-_schema-version: 3.3.0
+_schema-version: "3.3"
 ID: vendorCapmProject
+description: Vendor CAP + Angular project
 version: 1.0.0
-description: "A simple CAP project."
+modules:
+- name: vendorCapmProject-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: vendorCapmProject-db
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    memory: 256M
+- name: vendorCapmProject-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: vendorCapmProject-db
+    properties:
+      TARGET_CONTAINER: ~{hdi-container-name}
+  - name: cross-container-service-1
+    group: SERVICE_REPLACEMENTS
+    properties:
+      key: ServiceName_1
+      service: ~{the-service-name}
+  parameters:
+    memory: 256M
+- name: vendorCapmProject-approuter
+  type: approuter.nodejs
+  path: approuter
+  requires:
+  - name: vendorCapmProject-html5-runtime
+  - name: srv-api
+    group: destinations
+    properties:
+      forwardAuthToken: true
+      name: srv-api
+      url: ~{srv-url}
+  parameters:
+    keep-existing-routes: true
+    memory: 256M
+  build-parameters:
+    builder: npm
+- name: vendorCapmProject-ui
+  type: html5
+  path: ui-angular
+  build-parameters:
+    build-result: dist/ui-angular
+    builder: custom
+    commands:
+    - npm install
+    - ng build --configuration production
+    # supported-platforms: []
+- name: vendorCapmProject-ui-deployer
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: vendorCapmProject-html5-repo-host
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - dist/ui-angular/**
+      name: vendorCapmProject-ui
+      target-path: resources/
+resources:
+- name: vendorCapmProject-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+  properties:
+    hdi-container-name: ${service-name}
+- name: vendorCapmProject-xsuaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: vendorCapmProject-html5-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
+- name: vendorCapmProject-html5-runtime
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-runtime
+- name: cross-container-service-1
+  type: org.cloudfoundry.existing-service
+  parameters:
+    service-name: vendorCapmProject-db
+  properties:
+    the-service-name: ${service-name}
 parameters:
   enable-parallel-deployments: true
 build-parameters:
   before-all:
-    - builder: custom
-      commands:
-        - npm ci
-        - npx cds build --production
-modules:
-  - name: vendorCapmProject-srv
-    type: nodejs
-    path: gen/srv
-    parameters:
-      instances: 1
-      buildpack: nodejs_buildpack
-    build-parameters:
-      builder: npm-ci
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
-    requires:
-      - name: vendorCapmProject-db
-
-  - name: vendorCapmProject-db-deployer
-    type: hdb
-    path: gen/db
-    parameters:
-      buildpack: nodejs_buildpack
-    requires:
-      - name: vendorCapmProject-db
-
-resources:
-  - name: vendorCapmProject-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production

@@ -5,7 +5,10 @@
   "dependencies": {
     "@cap-js/hana": "^2",
     "@sap/cds": "^9",
-    "express": "^4"
+    "@sap/hdi-deploy": "^5.6.1",
+    "@sap/xssec": "^4.13.0",
+    "express": "^4",
+    "hdb": "^2.27.1"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2",
@@ -15,5 +18,16 @@
     "start": "cds-serve"
   },
   "private": true,
-  "cds": {}
+  "cds": {
+    "requires": {
+      "auth": {
+        "[development]": {
+          "kind": "mocked"
+        },
+        "[production]": {
+          "kind": "mocked"
+        }
+      }
+    }
+  }
 }

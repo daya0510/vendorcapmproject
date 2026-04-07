@@ -1,0 +1,18 @@
+<h2 class="title">Vendor List</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Request No</th>
+      <th>Vendor Code</th>
+      <th>Vendor Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let v of vendors" >
+      <td>{{ v.RequestNumber }}</td>
+      <td>{{ v.VendorCode }}</td>
+      <td>{{ v.VendorName }}</td>
+    </tr>
+  </tbody>
+</table>
